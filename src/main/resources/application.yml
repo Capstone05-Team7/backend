@@ -6,6 +6,11 @@ spring:
     ansi:
       enabled: always
 
+  profiles:
+    group:
+      local: "local"
+      dev: "dev"
+
   #jpa
   jpa:
     show-sql: true
@@ -16,14 +21,5 @@ spring:
   jackson:
     time-zone: Asia/Seoul
 
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ${LOCAL_DB_URL}
-    username: ${LOCAL_DB_USERNAME}
-    password: ${LOCAL_DB_PASSWORD}
-
-    ai:
-      openai:
-        api-key: ${OPENAI_API_KEY}
-        chat:
-          model: text-embedding-3-small
+  config:
+    import: optional:env[.env]
