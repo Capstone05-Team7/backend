@@ -11,7 +11,7 @@ spring:
       local: "local"
       dev: "dev"
       test: "test"
-    active: local
+    default: local
 
   #jpa
   jpa:
