@@ -7,6 +7,7 @@ public class ScriptRequestDto {
 
     @Getter
     public static class ScriptRegisterDto{
+        Long projectId;
         String script;
     }
 }
