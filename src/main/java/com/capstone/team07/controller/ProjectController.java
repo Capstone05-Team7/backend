@@ -6,10 +6,9 @@ import com.capstone.team07.dto.project.ProjectResponseDto;
 import com.capstone.team07.service.ProjectService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,5 +21,11 @@ public class ProjectController {
     @Operation(summary = "프로젝트 등록")
     public ApiResponse<ProjectResponseDto.ProjectRegisterDto> registerProject(@RequestBody ProjectRequestDto.ProjectRegisterDto dto) {
         return ApiResponse.onSuccess(projectService.registerProject(dto));
+    }
+
+    @GetMapping()
+    @Operation(summary = "프로젝트 리스트 반환")
+    public ApiResponse<List<ProjectResponseDto.ProjectDto>> listProjects() {
+        return ApiResponse.onSuccess(projectService.getProjects());
     }
 }

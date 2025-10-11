@@ -8,6 +8,9 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class ProjectService {
@@ -28,5 +31,21 @@ public class ProjectService {
                 .description(savedProject.getDescription())
                 .name(savedProject.getName())
                 .build();
+    }
+
+    @Transactional
+    public List<ProjectResponseDto.ProjectDto> getProjects() {
+        List<Project> projects = projectRepository.findAll();
+
+        List<ProjectResponseDto.ProjectDto> projectDtoList = projects.stream()
+                .map(project -> ProjectResponseDto.ProjectDto.builder()
+                        .id(project.getId())
+                        .name(project.getName())
+                        .color(project.getColor())
+                        .description(project.getDescription())
+                        .build())
+                .collect(Collectors.toList());
+
+        return projectDtoList;
     }
 }
