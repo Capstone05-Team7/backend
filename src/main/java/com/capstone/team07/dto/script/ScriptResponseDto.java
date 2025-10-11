@@ -14,4 +14,14 @@ public class ScriptResponseDto {
     public static class ScriptRegisterDto{
         String script;
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ScriptDto{
+        Long scriptId;
+        Long projectId;
+        String script;
+    }
 }
