@@ -15,4 +15,15 @@ public class ProjectResponseDto {
         String description;
         String color;
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ProjectDto{
+        Long id;
+        String name;
+        String description;
+        String color;
+    }
 }
