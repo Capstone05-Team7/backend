@@ -6,10 +6,9 @@ import com.capstone.team07.dto.script.ScriptResponseDto;
 import com.capstone.team07.service.ScriptService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,5 +21,11 @@ public class ScriptController {
     @Operation(summary = "스크립트 등록")
     public ApiResponse<ScriptResponseDto.ScriptRegisterDto> registerScript(@RequestBody ScriptRequestDto.ScriptRegisterDto dto) {
         return ApiResponse.onSuccess(scriptService.registerScript(dto));
+    }
+
+    @GetMapping()
+    @Operation(summary = "스크립트 리스트 반환")
+    public ApiResponse<List<ScriptResponseDto.ScriptDto>> listScripts() {
+        return ApiResponse.onSuccess(scriptService.getScripts());
     }
 }
