@@ -1,5 +1,7 @@
 package com.capstone.team07.controller;
 
+import com.capstone.team07.apiPayload.ApiResponse;
+import com.capstone.team07.apiPayload.code.status.ErrorStatus;
 import com.capstone.team07.dto.speech.SpeechRequestDto;
 import com.capstone.team07.dto.speech.SpeechResponseDto;
 import com.capstone.team07.service.SpeechService;
@@ -18,7 +20,10 @@ public class SpeechController {
     private final SpeechService speechService;
 
     @PostMapping
-    public ResponseEntity<SpeechResponseDto> createProduct(@RequestBody SpeechRequestDto dto) {
-        return ResponseEntity.ok(speechService.getresult(dto));
+    public ApiResponse<SpeechResponseDto> createProduct(@RequestBody SpeechRequestDto dto) {
+        if (dto.getProjectNumber() == null) {
+            return ApiResponse.onFailure(ErrorStatus._BAD_REQUEST,null);
+        }
+        return ApiResponse.onSuccess(speechService.getresult(dto));
     }
 }

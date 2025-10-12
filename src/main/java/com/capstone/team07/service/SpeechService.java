@@ -1,5 +1,6 @@
 package com.capstone.team07.service;
 
+import com.capstone.team07.apiPayload.ApiResponse;
 import com.capstone.team07.dto.speech.SpeechRequestDto;
 import com.capstone.team07.dto.speech.SpeechResponseDto;
 import com.capstone.team07.repository.ScriptRepository;
@@ -26,10 +27,6 @@ public class SpeechService {
     private final ScriptRepository scriptRepository;
 
     public SpeechResponseDto getresult(SpeechRequestDto dto) {
-        if (dto.getProjectNumber() == null) {
-            throw new IllegalArgumentException("projectNumber가 비어 있습니다.");
-        }
-
         long start = System.currentTimeMillis();
 
         List<String> contents = scriptRepository.findSentenceContentsByProjectId(dto.getProjectNumber());

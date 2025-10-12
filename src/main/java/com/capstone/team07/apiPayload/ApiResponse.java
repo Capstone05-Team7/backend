@@ -1,5 +1,7 @@
 package com.capstone.team07.apiPayload;
 
+import com.capstone.team07.apiPayload.code.BaseCode;
+import com.capstone.team07.apiPayload.code.status.ErrorStatus;
 import com.capstone.team07.apiPayload.code.status.SuccessStatus;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -21,5 +23,9 @@ public class ApiResponse<T> {
 
     public static <T> ApiResponse<T> onSuccess(T result) {
         return new ApiResponse<>(true, SuccessStatus._OK.getCode(), SuccessStatus._OK.getMessage(), result);
+    }
+
+    public static <T> ApiResponse<T> onFailure(ErrorStatus errorStatus, T result) {
+        return new ApiResponse<>(false, errorStatus.getCode(), errorStatus.getMessage(), result);
     }
 }
