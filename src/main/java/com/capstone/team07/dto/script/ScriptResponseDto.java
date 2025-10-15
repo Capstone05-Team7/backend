@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 public class ScriptResponseDto {
 
     @Builder
@@ -12,16 +14,33 @@ public class ScriptResponseDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ScriptRegisterDto{
-        String script;
+        List<SentenceInfo> scripts;
+
+        @Builder
+        @Getter
+        @NoArgsConstructor
+        @AllArgsConstructor
+        public static class SentenceInfo {
+            Long sentenceId;
+            String sentenceContent;
+        }
     }
 
     @Builder
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class ScriptDto{
-        Long scriptId;
+    public static class ScriptGetResponseDto{
         Long projectId;
-        String script;
+        List<SentenceInfo> scripts;
+
+        @Builder
+        @Getter
+        @NoArgsConstructor
+        @AllArgsConstructor
+        public static class SentenceInfo {
+            Long sentenceId;
+            String sentenceContent;
+        }
     }
 }

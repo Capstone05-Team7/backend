@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,28 +25,67 @@ public class ScriptService {
     public ScriptResponseDto.ScriptRegisterDto registerScript(ScriptRequestDto.ScriptRegisterDto dto) {
         Project project = projectRepository.findById(dto.getProjectId()).orElse(null);
 
-        Script savedScript = scriptRepository.save(Script.builder()
-                .project(project)
-                .sentence_content(dto.getScript())
-                .build()
-        );
+        List<String> sentences = splitScript(dto.getScript());
+        List<ScriptResponseDto.ScriptRegisterDto.SentenceInfo> sentenceInfos = new ArrayList<>();
+
+        long sentenceIdCounter = 1;
+
+        for (String sentence : sentences) {
+            // 같은 프로젝트 & sentenceId 존재하면 삭제
+            scriptRepository.deleteByProjectAndSentenceId(project, sentenceIdCounter);
+
+            Script savedSentence = scriptRepository.save(Script.builder()
+                    .project(project)
+                    .sentenceId(sentenceIdCounter)
+                    .sentenceContent(sentence)
+                    .build()
+            );
+
+            sentenceInfos.add(ScriptResponseDto.ScriptRegisterDto.SentenceInfo.builder()
+                    .sentenceId(savedSentence.getSentenceId())
+                    .sentenceContent(savedSentence.getSentenceContent())
+                    .build());
+
+            sentenceIdCounter++;
+        }
+
         return ScriptResponseDto.ScriptRegisterDto.builder()
-                .script(savedScript.getSentence_content())
+                .scripts(sentenceInfos)
                 .build();
     }
 
     @Transactional
-    public List<ScriptResponseDto.ScriptDto> getScripts() {
-    List<Script> scripts = scriptRepository.findAll();
+    public List<ScriptResponseDto.ScriptGetResponseDto> getScript(ScriptRequestDto.ScriptGetRequestDto dto) {
 
-        List<ScriptResponseDto.ScriptDto> scriptDtoList = scripts.stream()
-                .map(script -> ScriptResponseDto.ScriptDto.builder()
-                        .scriptId(script.getId())         // Script 엔티티의 ID를 DTO의 scriptId에 매핑
-                        .projectId(script.getProject().getId()) // Script 엔티티의 projectId를 DTO에 매핑
-                        .script(script.getSentence_content())      // Script 엔티티의 내용(content)을 DTO의 script에 매핑
-                        .build())
-                .collect(Collectors.toList());
+        // 1. 프로젝트 ID로 문장 조회
+        List<Script> sentences = scriptRepository.findByProjectIdOrderBySentenceIdAsc(dto.getProjectId());
 
-        return scriptDtoList;
+        // 2. 문장들을 SentenceInfo로 변환
+        List<ScriptResponseDto.ScriptGetResponseDto.SentenceInfo> sentenceInfos = new ArrayList<>();
+        for (Script sentence : sentences) {
+            ScriptResponseDto.ScriptGetResponseDto.SentenceInfo info =
+                    ScriptResponseDto.ScriptGetResponseDto.SentenceInfo.builder()
+                            .sentenceId(sentence.getSentenceId())
+                            .sentenceContent(sentence.getSentenceContent())
+                            .build();
+            sentenceInfos.add(info);
+        }
+
+        // 3. 프로젝트 단위로 Response DTO 생성
+        ScriptResponseDto.ScriptGetResponseDto responseDto =
+                ScriptResponseDto.ScriptGetResponseDto.builder()
+                        .projectId(dto.getProjectId())
+                        .scripts(sentenceInfos)
+                        .build();
+
+        // 4. 리스트로 감싸서 반환 (프로젝트 하나 기준이니까 하나만 들어있음)
+        return List.of(responseDto);
+    }
+
+    private List<String> splitScript(String script) {
+        // 단순한 구분 기준 (.?!)
+        return Arrays.stream(script.split("(?<=[.!?])\\s+"))
+                .filter(s -> !s.isBlank())
+                .toList();
     }
 }
