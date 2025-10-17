@@ -13,6 +13,7 @@ import java.util.List;
 public interface ScriptRepository extends JpaRepository<Script, Long> {
     void deleteByProjectAndSentenceId(Project project, Long sentenceId);
     List<Script> findByProjectIdOrderBySentenceIdAsc(Long projectId);
-    @Query("SELECT s.sentence_content FROM Script s WHERE s.project.id = :projectId")
+
+    @Query("SELECT s.sentenceContent FROM Script s WHERE s.project.id = :projectId")
     List<String> findSentenceContentsByProjectId(@Param("projectId") Long projectId);
 }
