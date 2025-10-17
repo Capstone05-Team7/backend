@@ -10,4 +10,9 @@ public class ScriptRequestDto {
         Long projectId;
         String script;
     }
+
+    @Getter
+    public static class ScriptGetRequestDto{
+        Long projectId;
+    }
 }
