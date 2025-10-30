@@ -6,31 +6,25 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.HashSet;
-import java.util.Set;
-
-@Table(
-        name = "script",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"project_id", "sentenceId"})
-)
 @Entity
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Script {
+public class SentenceFragment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "project_id")
-    private Project project;
+    @JoinColumn(name = "sentence_Id")
+    private Sentence sentence;
 
+    @Column(name = "fragment_sentence_id")
     private Long sentenceId;
-    private String sentenceContent;
 
-    @ElementCollection
-    private Set<String> keyword = new HashSet<>();
+    private Long sentenceOrder;
+    private String sentenceFragmentContent;
+    private String keyword;
 }

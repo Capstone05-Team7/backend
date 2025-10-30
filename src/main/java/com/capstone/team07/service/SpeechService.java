@@ -1,9 +1,8 @@
 package com.capstone.team07.service;
 
-import com.capstone.team07.apiPayload.ApiResponse;
 import com.capstone.team07.dto.speech.SpeechRequestDto;
 import com.capstone.team07.dto.speech.SpeechResponseDto;
-import com.capstone.team07.repository.ScriptRepository;
+import com.capstone.team07.repository.SentenceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -24,12 +23,12 @@ public class SpeechService {
             .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
             .build();
 
-    private final ScriptRepository scriptRepository;
+    private final SentenceRepository sentenceRepository;
 
     public SpeechResponseDto getresult(SpeechRequestDto dto) {
         long start = System.currentTimeMillis();
 
-        List<String> contents = scriptRepository.findSentenceContentsByProjectId(dto.getProjectNumber());
+        List<String> contents = sentenceRepository.findSentenceContentsByProjectId(dto.getProjectNumber());
 
         String inputPrompt = """
                 스크립트:

@@ -1,9 +1,9 @@
-package com.capstone.team07.dto.script;
+package com.capstone.team07.dto.sentence;
 
 import lombok.Getter;
 
 
-public class ScriptRequestDto {
+public class SentenceRequestDto {
 
     @Getter
     public static class ScriptRegisterDto{
