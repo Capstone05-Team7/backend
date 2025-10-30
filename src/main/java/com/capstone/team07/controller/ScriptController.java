@@ -25,7 +25,7 @@ public class ScriptController {
 
     @GetMapping()
     @Operation(summary = "스크립트 리스트 반환")
-    public ApiResponse<List<ScriptResponseDto.ScriptDto>> listScripts() {
-        return ApiResponse.onSuccess(scriptService.getScripts());
+    public ApiResponse<List<ScriptResponseDto.ScriptGetResponseDto>> getScript(@RequestBody ScriptRequestDto.ScriptGetRequestDto dto) {
+        return ApiResponse.onSuccess(scriptService.getScript(dto));
     }
 }

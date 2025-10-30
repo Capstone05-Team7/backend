@@ -9,6 +9,10 @@ import lombok.NoArgsConstructor;
 import java.util.HashSet;
 import java.util.Set;
 
+@Table(
+        name = "script",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"project_id", "sentenceId"})
+)
 @Entity
 @Getter
 @NoArgsConstructor
@@ -20,12 +24,12 @@ public class Script {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "project_id")
     private Project project;
 
-    private Long sentence_id;
-    private String sentence_content;
+    private Long sentenceId;
+    private String sentenceContent;
 
     @ElementCollection
     private Set<String> keyword = new HashSet<>();
