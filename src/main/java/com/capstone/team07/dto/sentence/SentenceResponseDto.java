@@ -1,4 +1,4 @@
-package com.capstone.team07.dto.script;
+package com.capstone.team07.dto.sentence;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-public class ScriptResponseDto {
+public class SentenceResponseDto {
 
     @Builder
     @Getter
@@ -22,7 +22,9 @@ public class ScriptResponseDto {
         @AllArgsConstructor
         public static class SentenceInfo {
             Long sentenceId;
-            String sentenceContent;
+            Long sentenceOrder;
+            String sentenceFragmentContent;
+            String keyword;
         }
     }
 
@@ -40,7 +42,9 @@ public class ScriptResponseDto {
         @AllArgsConstructor
         public static class SentenceInfo {
             Long sentenceId;
-            String sentenceContent;
+            Long sentenceOrder;
+            String sentenceFragmentContent;
+            String keyword;
         }
     }
 }
