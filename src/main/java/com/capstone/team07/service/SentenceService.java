@@ -1,5 +1,6 @@
 package com.capstone.team07.service;
 
+import com.capstone.team07.apiPayload.ApiResponse;
 import com.capstone.team07.domain.Project;
 import com.capstone.team07.domain.Sentence;
 import com.capstone.team07.domain.SentenceFragment;
@@ -35,13 +36,12 @@ public class SentenceService {
             .build();
 
     @Transactional
-    public SentenceResponseDto.ScriptRegisterDto registerScript(SentenceRequestDto.ScriptRegisterDto dto) {
+    public ApiResponse<Void> registerScript(SentenceRequestDto.ScriptRegisterDto dto) {
 
         // 1번과정 : 스크립트를 입력받으면 스크립트를 문장별로 추출해서 저장해놓기. (to ScriptRepository (예비용))
         Project project = projectRepository.findById(dto.getProjectId()).orElse(null);
 
         List<String> sentences = splitScript(dto.getScript());
-        List<SentenceResponseDto.ScriptRegisterDto.SentenceInfo> sentenceInfos = new ArrayList<>();
 
         long sentenceIdCounter = 1;
 
@@ -55,20 +55,18 @@ public class SentenceService {
                     .sentenceContent(sentence)
                     .build()
             );
-
-
             sentenceIdCounter++;
         }
 
         // 2번과정 : 추출된 문장들을 ChatGPT AI를 통해 의미 단위를 기준으로 키워드 받아오기.
-        List<String> contents = sentenceRepository.findSentenceContentsByProjectId(dto.getProjectId());
+        List<Sentence> contents = sentenceRepository.findByProjectIdOrderBySentenceIdAsc(dto.getProjectId());
 
         // 문장번호 붙이기
         StringBuilder numberedContents = new StringBuilder();
         for (int i = 0; i < contents.size(); i++) {
             numberedContents.append(i + 1) // 문장번호 1부터 시작
                     .append(" : ")
-                    .append(contents.get(i))
+                    .append(contents.get(i).getSentenceContent())
                     .append("\n");
         }
 
@@ -119,8 +117,9 @@ public class SentenceService {
                             String sentenceFragmentContent = parts[2].trim();
                             String keyword = parts[3].trim();
 
-                            Sentence sentence = sentenceRepository.findById(sentenceId)
-                                    .orElseThrow(() -> new RuntimeException("Sentence not found"));
+                            Sentence sentence = sentenceRepository
+                                    .findByProjectIdAndSentenceId(dto.getProjectId(), sentenceId)
+                                    .orElseThrow(() -> new RuntimeException("해당 문장을 찾을 수 없습니다."));
 
                             // 바로 저장
                             SentenceFragment fragment = sentenceFragmentRepository.save(SentenceFragment.builder()
@@ -130,29 +129,20 @@ public class SentenceService {
                                     .sentenceFragmentContent(sentenceFragmentContent)
                                     .keyword(keyword).build());
                             sentenceFragmentRepository.save(fragment);
-
-                            sentenceInfos.add(SentenceResponseDto.ScriptRegisterDto.SentenceInfo.builder()
-                                    .sentenceId(fragment.getSentenceId())
-                                    .sentenceOrder(fragment.getSentenceOrder())
-                                    .sentenceFragmentContent(fragment.getSentenceFragmentContent())
-                                    .keyword(fragment.getKeyword())
-                                    .build());
                         }
                     }
                 }
             }
         }
 
-        return SentenceResponseDto.ScriptRegisterDto.builder()
-                .scripts(sentenceInfos)
-                .build();
+        return ApiResponse.onSuccess(null);
     }
 
     @Transactional
-    public List<SentenceResponseDto.ScriptGetResponseDto> getScript(SentenceRequestDto.ScriptGetRequestDto dto) {
+    public List<SentenceResponseDto.ScriptGetResponseDto> getScript(Long projectId) {
 
         // 1. 프로젝트 ID로 문장 조각 조회
-        List<SentenceFragment> fragments = sentenceFragmentRepository.findAllBySentence_Project_Id(dto.getProjectId());
+        List<SentenceFragment> fragments = sentenceFragmentRepository.findAllBySentence_Project_Id(projectId);
 
         // 2. 문장들을 SentenceInfo로 변환
         List<SentenceResponseDto.ScriptGetResponseDto.SentenceInfo> sentenceInfos = new ArrayList<>();
@@ -170,7 +160,7 @@ public class SentenceService {
         // 3. 프로젝트 단위로 Response DTO 생성
         SentenceResponseDto.ScriptGetResponseDto responseDto =
                 SentenceResponseDto.ScriptGetResponseDto.builder()
-                        .projectId(dto.getProjectId())
+                        .projectId(projectId)
                         .scripts(sentenceInfos)
                         .build();
 

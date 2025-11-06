@@ -25,5 +25,6 @@ public class ProjectResponseDto {
         String name;
         String description;
         String color;
+        Boolean isScriptSaved;
     }
 }

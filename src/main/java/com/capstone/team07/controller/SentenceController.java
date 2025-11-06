@@ -19,13 +19,13 @@ public class SentenceController {
 
     @PostMapping()
     @Operation(summary = "스크립트 등록")
-    public ApiResponse<SentenceResponseDto.ScriptRegisterDto> registerScript(@RequestBody SentenceRequestDto.ScriptRegisterDto dto) {
-        return ApiResponse.onSuccess(sentenceService.registerScript(dto));
+    public ApiResponse<Void> registerScript(@RequestBody SentenceRequestDto.ScriptRegisterDto dto) {
+        return sentenceService.registerScript(dto);  // 이미 ApiResponse<Void> 반환
     }
 
-    @GetMapping()
+    @GetMapping("/{projectId}")
     @Operation(summary = "스크립트 리스트 반환")
-    public ApiResponse<List<SentenceResponseDto.ScriptGetResponseDto>> getScript(@RequestBody SentenceRequestDto.ScriptGetRequestDto dto) {
-        return ApiResponse.onSuccess(sentenceService.getScript(dto));
+    public ApiResponse<List<SentenceResponseDto.ScriptGetResponseDto>> getScript(@PathVariable Long projectId) {
+        return ApiResponse.onSuccess(sentenceService.getScript(projectId));
     }
 }
