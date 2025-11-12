@@ -7,9 +7,11 @@ import org.springframework.stereotype.Controller;
 
 import com.capstone.team07.service.PresentationService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
 @Controller
+@Slf4j
 public class PresentationStompController {
 
 	private final SimpMessagingTemplate messagingTemplate;
@@ -22,7 +24,7 @@ public class PresentationStompController {
 	@MessageMapping("/stt")
 	public void handleSttStream(String spokenText, @Header("presentationId") String presentationId) {
 
-		// 진행 상황 추적 및 중단 판단
+/*		// 진행 상황 추적 및 중단 판단
 		String hintText = presentationService.processSttTextAndCheckInterruption(presentationId, spokenText);
 
 		// 클라이언트에게 푸시
@@ -32,6 +34,20 @@ public class PresentationStompController {
 
 			// presentationId를 구독하는 클라이언트에게 푸시
 			messagingTemplate.convertAndSend(destination, hintText);
+		}*/
+
+		// 현재 문장 추적
+		String currentSentenceId = presentationService.calculateSimilarity(spokenText);
+
+		log.info("-------여긴데 {}", currentSentenceId);
+
+		// 클라이언트에게 푸시
+		// 구독 주소: /sub/current/{presentationId}
+		if (currentSentenceId != null && !currentSentenceId.isEmpty()){
+			String destination = "/sub/current/" + presentationId;
+
+			// presentationId를 구독하는 클라이언트에게 푸시
+			messagingTemplate.convertAndSend(destination, currentSentenceId);
 		}
 	}
 }

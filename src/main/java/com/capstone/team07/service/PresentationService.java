@@ -1,17 +1,26 @@
 package com.capstone.team07.service;
 
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
 
+import com.capstone.team07.dto.Embedding.SimilarityRequestDto;
+import com.capstone.team07.dto.Embedding.SimilarityResponseDto;
 import com.capstone.team07.dto.speech.SpeechRequestDto;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.Mono;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class PresentationService {
 	private final SpeechService speechService;
+	private final WebClient webClient;
 
 	// (실제 환경에서는 Redis 등으로 관리 필요)
 	// 발표 ID별 현재 진행 상태를 저장
@@ -54,6 +63,14 @@ public class PresentationService {
 		return null; // 정상 진행 중
 	}
 
+
+	public String calculateSimilarity(String spokenText) {
+		SimilarityResponseDto dto = callSimilaritySearchApi(spokenText);
+
+		return dto.getMostSimilarId();
+	}
+
+
 	// 발표 상태 저장
 	private static class PresentationState {
 		private long lastMessageTime; // 마지막 STT 메시지 수신 시간
@@ -90,5 +107,36 @@ public class PresentationService {
 			.build();
 
 		return speechService.getresult(dto).getNext();
+	}
+
+
+	/**
+	* Python FastAPI 서버의 유사도 검색 엔드포인트를 호출
+	*/
+	private SimilarityResponseDto callSimilaritySearchApi(String spokenText) {
+		// FastAPI로 보낼 요청 DTO 생성
+		SimilarityRequestDto request = new SimilarityRequestDto(spokenText);
+
+		// WebClient를 이용해 비동기적으로 API 호출
+		Mono<SimilarityResponseDto> responseMono = webClient.post()
+			.uri("/api/similarity/search")
+			.contentType(MediaType.APPLICATION_JSON)
+			.bodyValue(request) // 요청 본문에 SimilarityQuery 객체 전달
+			.retrieve()
+			.bodyToMono(SimilarityResponseDto.class) // 응답을 SimilarityResult 객체로 받음
+			.doOnError(error -> log.error("FastAPI 호출 중 오류 발생: {}", error.getMessage()))
+			.onErrorResume(e -> {
+				// 오류 발생 시 기본값 (0점) 반환
+				log.error("FastAPI 호출 실패, 더미 결과 반환.", e);
+				SimilarityResponseDto dummy = new SimilarityResponseDto();
+				dummy.setSimilarityScore(0.0f);
+				dummy.setMostSimilarId("FastAPI 서버 연결 실패");
+				dummy.setQueryProcessTime(0.0f);
+				return Mono.just(dummy);
+			});
+
+		// Mono를 블록킹하여 결과를 동기적으로 반환 (WebSocket 흐름상 동기 처리가 간편)
+		// **주의:** 성능에 민감한 환경에서는 블록킹 대신 Reactive하게 처리하는 것을 고려해야 합니다.
+		return responseMono.block();
 	}
 }
