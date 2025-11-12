@@ -13,25 +13,6 @@ public class SentenceResponseDto {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class ScriptRegisterDto{
-        List<SentenceInfo> scripts;
-
-        @Builder
-        @Getter
-        @NoArgsConstructor
-        @AllArgsConstructor
-        public static class SentenceInfo {
-            Long sentenceId;
-            Long sentenceOrder;
-            String sentenceFragmentContent;
-            String keyword;
-        }
-    }
-
-    @Builder
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
     public static class ScriptGetResponseDto{
         Long projectId;
         List<SentenceInfo> scripts;

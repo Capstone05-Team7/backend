@@ -4,6 +4,7 @@ import com.capstone.team07.domain.Project;
 import com.capstone.team07.dto.project.ProjectRequestDto;
 import com.capstone.team07.dto.project.ProjectResponseDto;
 import com.capstone.team07.repository.ProjectRepository;
+import com.capstone.team07.repository.SentenceRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import java.util.stream.Collectors;
 public class ProjectService {
 
     private final ProjectRepository projectRepository;
+    private final SentenceRepository sentenceRepository;
 
     @Transactional
     public ProjectResponseDto.ProjectRegisterDto registerProject(ProjectRequestDto.ProjectRegisterDto dto) {
@@ -43,6 +45,7 @@ public class ProjectService {
                         .name(project.getName())
                         .color(project.getColor())
                         .description(project.getDescription())
+                        .isScriptSaved(sentenceRepository.existsByProjectId(project.getId()))
                         .build())
                 .collect(Collectors.toList());
 
