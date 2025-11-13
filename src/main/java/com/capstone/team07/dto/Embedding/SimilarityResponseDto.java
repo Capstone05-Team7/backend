@@ -12,9 +12,13 @@ import lombok.Setter;
 @AllArgsConstructor
 @Setter
 public class SimilarityResponseDto {
-	// 가장 유사한 스크립트 문장
+	// 가장 유사한 스크립트 문장id
 	@JsonProperty("most_similar_id")
 	private String mostSimilarId;
+
+	// 가장 유사한 스크립트 문장
+	@JsonProperty("most_similar_text")
+	private String mostSimilarText;
 
 	// 유사도 점수 (float)
 	@JsonProperty("similarity_score")
