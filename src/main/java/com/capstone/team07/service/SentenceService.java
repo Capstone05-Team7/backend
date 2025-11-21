@@ -157,6 +157,7 @@ public class SentenceService {
                             .sentenceOrder(sentenceFragment.getSentenceOrder())
                             .sentenceFragmentContent(sentenceFragment.getSentenceFragmentContent())
                             .keyword(sentenceFragment.getKeyword())
+                            .image(sentenceFragment.getImage())
                             .build();
             sentenceInfos.add(info);
         }
