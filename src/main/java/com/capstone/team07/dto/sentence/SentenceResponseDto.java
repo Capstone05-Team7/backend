@@ -26,6 +26,7 @@ public class SentenceResponseDto {
             Long sentenceOrder;
             String sentenceFragmentContent;
             String keyword;
+            String image;
         }
     }
 }

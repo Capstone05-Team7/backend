@@ -27,4 +27,5 @@ public class SentenceFragment {
     private Long sentenceOrder;
     private String sentenceFragmentContent;
     private String keyword;
+    private String image;
 }
