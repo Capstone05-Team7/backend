@@ -19,4 +19,6 @@ public interface SentenceRepository extends JpaRepository<Sentence, Long> {
     Optional<Sentence> findByProjectIdAndSentenceId(Long projectId, Long sentenceId);
 
     Boolean existsByProjectId(Long projectId);
+
+    List<Sentence> findByProjectId(Long projectId);
 }
