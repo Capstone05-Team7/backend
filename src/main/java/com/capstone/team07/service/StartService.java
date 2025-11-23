@@ -1,8 +1,8 @@
 package com.capstone.team07.service;
 
-import com.capstone.team07.domain.Sentence;
+import com.capstone.team07.domain.SentenceFragment;
 import com.capstone.team07.dto.start.ScriptDataDto;
-import com.capstone.team07.repository.SentenceRepository;
+import com.capstone.team07.repository.SentenceFragmentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,19 +17,19 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class StartService {
 
-    private final SentenceRepository sentenceRepository;
+    private final SentenceFragmentRepository sentenceFragmentRepository;
     private final WebClient webClient;
 
     @Transactional(readOnly = true)
     public void processAndSendSentences(Long projectId) {
-        // 1. DB에서 Sentence 엔티티 리스트를 조회합니다.
-        List<Sentence> sentences = sentenceRepository.findByProjectId(projectId);
+        // 1. DB에서 projectId에 해당하는 SentenceFragment 엔티티 리스트를 조회합니다.
+        List<SentenceFragment> fragments = sentenceFragmentRepository.findByProjectId(projectId);
 
-        // 2. Sentence 엔티티 리스트를 ScriptDataDto 리스트로 변환합니다.
-        List<ScriptDataDto> scriptDataDtos = sentences.stream()
-                .map(sentence -> new ScriptDataDto(
-                        String.valueOf(sentence.getSentenceId()),
-                        sentence.getSentenceContent()
+        // 2. SentenceFragment 엔티티 리스트를 ScriptDataDto 리스트로 변환합니다.
+        List<ScriptDataDto> scriptDataDtos = fragments.stream()
+                .map(fragment -> new ScriptDataDto(
+                        String.valueOf(fragment.getSentenceId()), // fragment_sentence_id 사용
+                        fragment.getSentenceFragmentContent()      // sentence_fragment_content 사용
                 ))
                 .collect(Collectors.toList());
 
