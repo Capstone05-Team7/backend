@@ -8,7 +8,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class WebClientConfig {
 
 	// Python FastAPI 서버의 기본 URL
-	private static final String FASTAPI_BASE_URL = "http://localhost:8000";
+	private static final String FASTAPI_BASE_URL = "http://3.34.163.79:8000";
 
 	@Bean
 	public WebClient webClient() {
