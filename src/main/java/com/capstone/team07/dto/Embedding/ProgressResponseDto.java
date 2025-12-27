@@ -7,17 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/*
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Setter
-public class ProgressResponseDto {
-	@JsonProperty("progress_rate")
-	private Float progressRate;
-}
-*/
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

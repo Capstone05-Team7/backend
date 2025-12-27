@@ -6,17 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/*@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class ProgressRequestDto {
-	@JsonProperty("target_script_text")
-	private String targetScriptText;
-
-	@JsonProperty("query_text")
-	private String queryText;
-}*/
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

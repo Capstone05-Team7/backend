@@ -1,6 +1,5 @@
 package com.capstone.team07.apiPayload;
 
-import com.capstone.team07.apiPayload.code.BaseCode;
 import com.capstone.team07.apiPayload.code.status.ErrorStatus;
 import com.capstone.team07.apiPayload.code.status.SuccessStatus;
 import com.fasterxml.jackson.annotation.JsonInclude;
